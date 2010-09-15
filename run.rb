@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 require 'environment'
 
+TIME_BETWEEN_CHECKS = 10
+
 loop do
   build = Build.next_to_run
   if build
@@ -10,10 +12,11 @@ loop do
     p "done running, output of build follows\n\n"
     p run.output
 
-    p "rebooting in 60 seconds"
-    sleep 60
+    p "rebooting in #{SLEEP_TIME} seconds"
+    sleep TIME_BETWEEN_CHECKS
     p "Ok, not really rebooting"
   else
-    sleep 10
+    p "waiting for a build"
+    sleep TIME_BETWEEN_CHECKS
   end
 end
