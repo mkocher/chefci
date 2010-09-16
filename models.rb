@@ -38,6 +38,6 @@ class Build < ActiveRecord::Base
   end
 
   def env_vars_to_unset
-    ["BUNDLE_BIN_PATH", "BUNDLE_GEMFILE", "GEM_HOME"]
+    ["RUBYOPT", "BUNDLE_BIN_PATH", "BUNDLE_GEMFILE", "GEM_HOME"]
   end
 end

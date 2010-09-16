@@ -14,7 +14,7 @@ loop do
 
     p "rebooting in 120 seconds"
     sleep 120
-    system!("sudo reboot")
+    system("sudo reboot")
     p "Ok, not really rebooting"
   else
     p "waiting for a build"
