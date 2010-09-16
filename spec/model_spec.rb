@@ -36,6 +36,26 @@ describe Build do
     Build.next_to_run.id.should == @build.id
   end
   
+  it "has a name method" do
+    @build.name.should == "pivotalexperimental/wschef"
+  end
+  
+  it "can find the last run" do
+    @build.runs << Run.new(:git_hash => "DEADBEEF", :success => true)
+    @build.runs << Run.new(:git_hash => "SUCCESS", :success => false)
+    @build.last_run.git_hash.should == "SUCCESS"
+    @build.last_run.success.should == false
+  end
+  
+  it "knows if it's building" do
+    pending
+    half_run = Run.new(:git_hash => @build.latest_github_hash, :build => @build)
+    half_run.stub(:in_progress=).and_return(lambda{|values| true })
+    Run.stub(:new).and_return(half_run)
+    @build.execute
+    @build.building?.should be_true
+  end
+  
   describe "building a build" do
     it "can execute a build script" do
       @build.run_script = "echo foobar"

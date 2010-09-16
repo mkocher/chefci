@@ -24,13 +24,28 @@ class Build < ActiveRecord::Base
     runs.find_by_git_hash(latest_github_hash) == nil
   end
   
+  def building?
+    last_run.in_progress?
+  end
+  
   def execute
     run = Run.new(:git_hash => latest_github_hash, :build => self)
+    run.in_progress = true
+    run.save!
     command = "unset #{env_vars_to_unset.join(" ")} && PATH=#{pre_bundler_path} #{run_script} 2>&1"
     run.output = `#{command}`
     run.success = $?.to_i == 0
+    run.in_progress = false
     run.save!
     run
+  end
+  
+  def name
+    "#{github_user}/#{github_repository}"
+  end
+  
+  def last_run
+    runs.last
   end
 
   def pre_bundler_path
