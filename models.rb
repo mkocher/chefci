@@ -26,9 +26,18 @@ class Build < ActiveRecord::Base
   
   def execute
     run = Run.new(:git_hash => latest_github_hash, :build => self)
-    run.output = `#{run_script} 2>&1`
+    command = "unset #{env_vars_to_unset.join(" ")} && PATH=#{pre_bundler_path} #{run_script} 2>&1"
+    run.output = `#{command}`
     run.success = $?.to_i == 0
     run.save!
     run
+  end
+
+  def pre_bundler_path
+    ENV['PATH'] && ENV["PATH"].split(":").reject { |path| path.include?("vendor") }.join(":")
+  end
+
+  def env_vars_to_unset
+    ["BUNDLE_BIN_PATH", "BUNDLE_GEMFILE", "GEM_HOME"]
   end
 end
