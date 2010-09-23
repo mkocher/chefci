@@ -1,27 +1,34 @@
+class GitRepo < ActiveRecord::Base
+  belongs_to :build
+  def self.curl(url)
+    `curl -s #{url}`
+  end
+    
+  def latest_hash
+    url = "http://github.com/api/v2/yaml/repos/show/#{github_user}/#{github_repository}/branches"
+    response = YAML::load(self.class.curl(url))
+    response["branches"][git_branch]
+  end
+end
+
 class Run < ActiveRecord::Base
   belongs_to :build
 end
 
 class Build < ActiveRecord::Base
   has_many :runs
-  
-  def self.curl(url)
-    `curl -s #{url}`
-  end
-    
+  has_many :git_repos
   
   def self.next_to_run
     all.detect { |build| build.should_run? }
   end
   
-  def latest_github_hash
-    url = "http://github.com/api/v2/yaml/repos/show/#{github_user}/#{github_repository}/branches"
-    response = YAML::load(self.class.curl(url))
-    response["branches"][git_branch]
+  def latest_hashes
+    git_repos.order("id").map{|repo| repo.latest_hash }.join("_")
   end
   
   def should_run?
-    runs.find_by_git_hash(latest_github_hash) == nil
+    runs.find_by_git_hash(latest_hashes) == nil
   end
   
   def building?
@@ -29,7 +36,7 @@ class Build < ActiveRecord::Base
   end
   
   def execute
-    run = Run.new(:git_hash => latest_github_hash, :build => self)
+    run = Run.new(:git_hash => latest_hashes, :build => self)
     run.in_progress = true
     run.save!
     command = "unset #{env_vars_to_unset.join(" ")} && PATH=#{pre_bundler_path} #{run_script} 2>&1"
@@ -38,10 +45,6 @@ class Build < ActiveRecord::Base
     run.in_progress = false
     run.save!
     run
-  end
-  
-  def name
-    "#{github_user}/#{github_repository}"
   end
   
   def last_run

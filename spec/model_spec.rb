@@ -12,16 +12,25 @@ end
 describe Build do
   before do
     clear_db
-    @build = Build.new(:github_user => "pivotalexperimental", :github_repository => "wschef", :git_branch => "master", :run_script => "")
-    Build.stub(:curl).and_return "--- \nbranches: \n  master: DEADBEEF\n  broken_vim: df38014730975b9d18ee7fb969a247dac0b09ace\n"
+    @repo = GitRepo.new(:github_user => "pivotalexperimental", :github_repository => "wschef", :git_branch => "master")
+    @build = Build.new(:run_script => "", :git_repos => [@repo], :name => "Basic Build")
+    @build.save!
+    GitRepo.stub(:curl).and_return "--- \nbranches: \n  master: DEADBEEF\n  broken_vim: df38014730975b9d18ee7fb969a247dac0b09ace\n"
   end
   
   it "exists" do
     @build.should be_valid
   end
   
-  it "should be able to get the latest hash from github" do
-    @build.latest_github_hash.should == "DEADBEEF"
+  it "should be able to get the latest hashes with one git repo" do
+    @build.latest_hashes.should == "DEADBEEF"
+  end
+  
+  it "should be able to get the latest hashes with two git repos" do
+    @repo = GitRepo.new(:github_user => "pivotalexperimental", :github_repository => "ci_cookbook", :git_branch => "master")
+    @build.git_repos << @repo
+    @build.save
+    @build.latest_hashes.should == "DEADBEEF_DEADBEEF"
   end
   
   it "knows if it should run or not" do
@@ -37,7 +46,7 @@ describe Build do
   end
   
   it "has a name method" do
-    @build.name.should == "pivotalexperimental/wschef"
+    @build.name.should == "Basic Build"
   end
   
   it "can find the last run" do
@@ -81,7 +90,7 @@ end
 describe Run do
   before do
     clear_db
-    @build = Build.new(:github_user => "pivotalexperimental", :github_repository => "wschef", :git_branch => "master")
+    @build = Build.new
     @run = Run.new(:git_hash => "DEADBEEF", :success => true)
     Build.stub(:curl).and_return "--- \nbranches: \n  master: DEADBEEF\n  broken_vim: df38014730975b9d18ee7fb969a247dac0b09ace\n"
   end
@@ -89,5 +98,19 @@ describe Run do
   it "belongs to a build" do
     @run.build = @build
     @run.should be_valid
+  end
+end
+
+describe GitRepo do
+  before do
+    clear_db
+    # @build = Build.new
+    # @run = Run.new(:git_hash => "DEADBEEF", :success => true)
+    GitRepo.stub(:curl).and_return "--- \nbranches: \n  master: DEADBEEF\n  broken_vim: df38014730975b9d18ee7fb969a247dac0b09ace\n"
+  end
+  
+  it "can get its latest hash" do
+    @repo = GitRepo.new(:github_user => "pivotalexperimental", :github_repository => "wschef", :git_branch => "master")
+    @repo.latest_hash.should == "DEADBEEF"
   end
 end
