@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 require 'environment'
 require 'sinatra'
 require 'erubis'
