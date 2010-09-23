@@ -18,6 +18,12 @@ get '/builds/:build' do
   end
 end
 
+get '/builds/:build/runs/:run' do
+  @build = Build.find_by_id(params[:build])
+  @run = @build.runs.find_by_id(params[:run])
+  erubis :run
+end
+
 __END__
 
 @@ index
@@ -45,3 +51,16 @@ __END__
     </item>
   </channel>
 </rss>
+
+@@ run
+<html>
+<head>
+  <title>Run Details</title>
+</head>
+<body>
+  <h1>Run Details</h1>
+  <pre>
+<%= @run.output %>
+  <pre>
+</body>
+</html>
