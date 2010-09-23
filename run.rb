@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require 'environment'
 
-TIME_BETWEEN_CHECKS = 20
+TIME_BETWEEN_CHECKS = 30
 
 loop do
   build = Build.next_to_run

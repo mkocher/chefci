@@ -39,7 +39,7 @@ class Build < ActiveRecord::Base
     run = Run.new(:git_hash => latest_hashes, :build => self)
     run.in_progress = true
     run.save!
-    command = "unset #{env_vars_to_unset.join(" ")} && PATH=#{pre_bundler_path} #{run_script} 2>&1"
+    command = "unset #{env_vars_to_unset.join(" ")} && PATH=#{pre_bundler_path} #{run_script}"
     run.output = `#{command}`
     run.success = $?.to_i == 0
     run.in_progress = false
