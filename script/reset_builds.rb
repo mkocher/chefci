@@ -1,5 +1,8 @@
 #!/usr/bin/env ruby
-require 'environment'
+
+`cat #{File.expand_path(File.dirname(__FILE__) + "/../db/schema.sql")} | sqlite3 #{File.expand_path(File.dirname(__FILE__) + "/../db/production.sqlite3")}`
+
+require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
 
 Build.delete_all
 
