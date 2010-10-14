@@ -1,4 +1,5 @@
 .bundle
 vendor
-testing_db
-production_db
+db/production.sqlite3
+.DS_Store
+db/

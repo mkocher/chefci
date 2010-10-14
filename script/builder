@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require 'environment'
+require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
 
 TIME_BETWEEN_CHECKS = 30
 
