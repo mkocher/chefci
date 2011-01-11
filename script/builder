@@ -3,7 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
 
 TIME_BETWEEN_CHECKS = 30
 
-at_exit { system("sudo reboot") }
+#at_exit { system("sudo reboot") }
 
 loop do
   build = Build.next_to_run

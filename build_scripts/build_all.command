@@ -36,5 +36,5 @@ Recipes:
 - pivotal_workstation::workspace_directory
 SOLOISTRCCONTENTS
 
-LOG_LEVEL=debug soloist &&
+unset GEM_PATH && LOG_LEVEL=debug soloist &&
 echo "GREAT SUCCESS"
