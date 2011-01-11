@@ -12,7 +12,8 @@ class Build < ActiveRecord::Base
   end
   
   def should_run?
-    runs.find_by_git_hash(latest_hashes) == nil
+    run = runs.find_by_git_hash(latest_hashes)
+    run == nil || run.updated_at < Time.now - 60*60*24
   end
   
   def building?
