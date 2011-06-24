@@ -15,5 +15,5 @@ sleep 10
 
 cd /Volumes/Persistent/chefci &&
 sudo gem update --system &&
-sudo gem install bundler -v 1.0.0;
+sudo gem install bundler -v 1.0.10;
 ./script/server

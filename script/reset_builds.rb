@@ -14,6 +14,6 @@ Build.delete_all
 
 build = Build.new(:name => "Soloist All")
 build.git_repos << GitRepo.new(:github_user => "mkocher", :github_repository => "soloist", :git_branch => "master")
-build.git_repos << GitRepo.new(:github_user => "mkocher", :github_repository => "pivotal_workstation", :git_branch => "master")
+build.git_repos << GitRepo.new(:github_user => "pivotal", :github_repository => "pivotal_workstation", :git_branch => "master")
 build.run_script = "/Volumes/Persistent/chefci/build_scripts/build_all.command;"
 build.save!

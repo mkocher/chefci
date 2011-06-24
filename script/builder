@@ -22,3 +22,7 @@ loop do
     sleep TIME_BETWEEN_CHECKS
   end
 end
+
+p "Something went wrong, we'll wait an hour and then reboot"
+system("sleep  3600")
+system("sudo reboot")
